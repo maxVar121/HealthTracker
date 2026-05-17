@@ -1,0 +1,30 @@
+{
+  "name": "health-tracker",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "server": "node server.js",
+    "server:watch": "nodemon server.js",
+    "dev:full": "concurrently -k -n API,WEB -c cyan,green \"npm:server:watch\" \"npm:dev\"",
+    "build": "vite build",
+    "preview": "vite preview",
+    "check": "node --check server.js && node --check src/main.js",
+    "smoke": "node scripts/smoke-check.mjs"
+  },
+  "devDependencies": {
+    "nodemon": "^3.1.14",
+    "vite": "^8.0.10"
+  },
+  "dependencies": {
+    "@fortawesome/fontawesome-free": "^7.2.0",
+    "bcryptjs": "^3.0.3",
+    "chart.js": "^4.5.1",
+    "concurrently": "^9.2.1",
+    "cors": "^2.8.6",
+    "dotenv": "^17.4.2",
+    "express": "^5.2.1",
+    "pg": "^8.20.0"
+  }
+}

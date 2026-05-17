@@ -1,0 +1,291 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Трекер здоровья</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg" />
+  <link rel="stylesheet" href="/src/styles/main.css" />
+</head>
+<body>
+  <div class="app">
+    
+    <!-- HEADER -->
+    <header class="header">
+      <div class="header__brand">
+        <div class="header__logo-icon"><i class="fas fa-heart-pulse"></i></div>
+        <div class="header__brand-text">
+          <h1 class="header__title">Здоровье</h1>
+          <p class="header__subtitle">Отслеживание активности</p>
+        </div>
+      </div>
+
+      <div class="header__actions">
+
+        <!-- NOTIFICATIONS DROPDOWN -->
+        <div class="header__dropdown-wrap" id="notifWrap">
+          <button class="header__icon-btn" id="notifBtn" title="Уведомления">
+            <i class="far fa-bell"></i>
+            <span class="notif-badge hidden" id="notifBadge">0</span>
+          </button>
+          <div class="header__dropdown header__dropdown--notif hidden" id="notifDropdown">
+            <div class="notif__header">
+              <span class="notif__title">Уведомления</span>
+              <button class="notif__clear-btn" id="notifClearBtn">Очистить всё</button>
+            </div>
+            <div class="notif__list" id="notifList">
+              <div class="notif__empty">
+                <i class="far fa-message"></i>
+                <p>Уведомлений пока нет</p>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CALENDAR DROPDOWN -->
+        <div class="header__dropdown-wrap" id="calendarWrap">
+          <button class="header__icon-btn" id="calendarBtn" title="Календарь"><i class="far fa-calendar-days"></i></button>
+          <div class="header__dropdown header__dropdown--calendar hidden" id="calendarDropdown">
+            <div class="cal__header">
+              <button class="cal__nav-btn" id="calPrevMonth"><i class="fas fa-chevron-left"></i></button>
+              <span class="cal__month-label" id="calMonthLabel">Май 2026</span>
+              <button class="cal__nav-btn" id="calNextMonth"><i class="fas fa-chevron-right"></i></button>
+            </div>
+            <div class="cal__weekdays">
+              <span>Пн</span><span>Вт</span><span>Ср</span><span>Чт</span><span>Пт</span><span>Сб</span><span>Вс</span>
+            </div>
+            <div class="cal__grid" id="calGrid"></div>
+            <div class="cal__footer">
+              <button class="cal__today-btn" id="calTodayBtn">Сегодня</button>
+            </div>
+          </div>
+        </div>
+
+        <!-- PROFILE DROPDOWN -->
+        <div class="header__dropdown-wrap" id="profileWrap">
+          <button class="header__icon-btn header__icon-btn--profile" id="profileBtn" title="Профиль"><i class="far fa-circle-user"></i></button>
+          <div class="header__dropdown header__dropdown--profile hidden" id="profileDropdown">
+            <div class="profile-menu__hero">
+              <div class="profile-menu__avatar"><i class="far fa-user"></i></div>
+              <div class="profile-menu__info">
+                <p class="profile-menu__name" id="profileName">Пользователь</p>
+                <p class="profile-menu__email" id="profileEmail">—</p>
+              </div>
+              <div class="profile-menu__stats">
+                <div class="profile-menu__stat"><i class="fas fa-chart-line"></i><span class="profile-menu__stat-val" id="profileStreak">0</span><span class="profile-menu__stat-lbl">дней</span></div>
+                <div class="profile-menu__stat"><i class="fas fa-award"></i><span class="profile-menu__stat-val" id="profileBadges">0</span><span class="profile-menu__stat-lbl">наград</span></div>
+                <div class="profile-menu__stat"><i class="fas fa-gauge-high"></i><span class="profile-menu__stat-val" id="profileHealth">0%</span><span class="profile-menu__stat-lbl">прогресс</span></div>
+              </div>
+            </div>
+            <div class="profile-menu__items">
+              <button class="profile-menu__item" data-profile-tab="profile"><i class="far fa-id-card profile-menu__item-icon profile-menu__item-icon--blue"></i><div><p class="profile-menu__item-title">Мой профиль</p><p class="profile-menu__item-sub">Личная информация</p></div></button>
+              <button class="profile-menu__item" data-profile-tab="activity"><i class="fas fa-chart-column profile-menu__item-icon profile-menu__item-icon--green"></i><div><p class="profile-menu__item-title">Моя активность</p><p class="profile-menu__item-sub">История и статистика</p></div></button>
+              <button class="profile-menu__item" data-profile-tab="achievements"><i class="fas fa-award profile-menu__item-icon profile-menu__item-icon--purple"></i><div><p class="profile-menu__item-title">Достижения</p><p class="profile-menu__item-sub">Награды и бейджи</p></div></button>
+              <button class="profile-menu__item" data-profile-tab="sleep"><i class="far fa-moon profile-menu__item-icon profile-menu__item-icon--indigo"></i><div><p class="profile-menu__item-title">Режим сна</p><p class="profile-menu__item-sub">Настройка расписания</p></div></button>
+              <button class="profile-menu__item" data-profile-tab="settings"><i class="fas fa-sliders profile-menu__item-icon profile-menu__item-icon--gray"></i><div><p class="profile-menu__item-title">Настройки</p><p class="profile-menu__item-sub">Параметры приложения</p></div></button>
+              <button class="profile-menu__item profile-menu__item--danger" id="logoutBtn"><i class="fas fa-arrow-right-from-bracket profile-menu__item-icon profile-menu__item-icon--red"></i><div><p class="profile-menu__item-title">Выйти</p><p class="profile-menu__item-sub">Завершить сеанс</p></div></button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </header>
+
+    <!-- MAIN -->
+    <main class="main">
+      
+      <!-- AUTH -->
+      <section class="auth-section" id="authSection">
+        <div class="auth-card">
+          <div class="auth-card__icon"><i class="fas fa-heart-pulse"></i></div>
+          <h2 class="auth-card__title">Вход в систему</h2>
+          <input type="email" class="auth-card__input" id="email" placeholder="Email" />
+          <input type="password" class="auth-card__input" id="password" placeholder="Пароль" />
+          <div class="auth-card__buttons">
+            <button class="auth-card__btn auth-card__btn--primary" id="loginBtn">Войти</button>
+            <button class="auth-card__btn auth-card__btn--secondary" id="registerBtn">Регистрация</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- DASHBOARD -->
+      <section class="dashboard hidden" id="dashboard">
+
+        <!-- DAY NAVIGATION BAR -->
+        <div class="day-nav-bar">
+          <button class="day-nav-bar__btn" id="prevDay" title="Предыдущий день">
+            <i class="fas fa-chevron-left"></i>
+            <span>Назад</span>
+          </button>
+
+          <div class="day-nav-bar__center">
+            <span class="day-nav-bar__label" id="dayNavLabel">Сегодня</span>
+            <span class="day-nav-bar__date" id="dayNavDate">10 мая 2026</span>
+          </div>
+
+          <button class="day-nav-bar__btn day-nav-bar__btn--right" id="nextDay" title="Следующий день">
+            <span>Вперёд</span>
+            <i class="fas fa-chevron-right"></i>
+          </button>
+        </div>
+
+        <!-- METRICS -->
+        <div class="metrics-grid">
+          <div class="metric-card">
+            <div class="metric-card__header"><div class="metric-card__icon-wrapper metric-card__icon--steps"><i class="fas fa-person-walking"></i></div></div>
+            <h3 class="metric-card__title">Шаги</h3>
+            <p class="metric-card__current" id="resultSteps">Шаги сегодня: 0 шагов</p>
+            <div class="metric-card__input-row">
+              <input type="number" class="metric-card__input" id="steps" placeholder="шагов" />
+              <button class="metric-card__btn metric-card__btn--add" id="addSteps">Добавить</button>
+              <button class="metric-card__btn metric-card__btn--reset" id="resetSteps">Сбросить</button>
+            </div>
+            <p class="metric-card__goal-label">Цель шагов: <span id="stepsGoalDisplay">10 000</span> шагов</p>
+            <div class="metric-card__goal-row">
+              <input type="number" class="metric-card__input metric-card__input--goal" id="stepsGoal" placeholder="цель" />
+              <button class="metric-card__btn metric-card__btn--set" id="setStepsGoal">Установить</button>
+              <button class="metric-card__btn metric-card__btn--clear" id="clearStepsGoal">Очистить</button>
+            </div>
+            <div class="metric-card__progress-row">
+              <div class="metric-card__progress-track"><div class="metric-card__progress-fill metric-card__progress-fill--steps" id="stepsProgress"></div></div>
+              <span class="metric-card__progress-value" id="stepsPercent">0%</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-card__header"><div class="metric-card__icon-wrapper metric-card__icon--water"><i class="fas fa-droplet"></i></div></div>
+            <h3 class="metric-card__title">Вода</h3>
+            <p class="metric-card__current" id="resultWater">Вода сегодня: 0 мл</p>
+            <div class="metric-card__input-row">
+              <input type="number" class="metric-card__input" id="water" placeholder="мл" />
+              <button class="metric-card__btn metric-card__btn--add" id="addWater">Добавить</button>
+              <button class="metric-card__btn metric-card__btn--reset" id="resetWater">Сбросить</button>
+            </div>
+            <p class="metric-card__goal-label">Цель воды: <span id="waterGoalDisplay">2 000</span> мл</p>
+            <div class="metric-card__goal-row">
+              <input type="number" class="metric-card__input metric-card__input--goal" id="waterGoal" placeholder="цель" />
+              <button class="metric-card__btn metric-card__btn--set" id="setWaterGoal">Установить</button>
+              <button class="metric-card__btn metric-card__btn--clear" id="clearWaterGoal">Очистить</button>
+            </div>
+            <div class="metric-card__progress-row">
+              <div class="metric-card__progress-track"><div class="metric-card__progress-fill metric-card__progress-fill--water" id="waterProgress"></div></div>
+              <span class="metric-card__progress-value" id="waterPercent">0%</span>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-card__header"><div class="metric-card__icon-wrapper metric-card__icon--calories"><i class="fas fa-bowl-food"></i></div></div>
+            <h3 class="metric-card__title">Калории</h3>
+            <p class="metric-card__current" id="resultCalories">Калории сегодня: 0 ккал</p>
+            <div class="metric-card__input-row">
+              <input type="number" class="metric-card__input" id="calories" placeholder="ккал" />
+              <button class="metric-card__btn metric-card__btn--add" id="addCalories">Добавить</button>
+              <button class="metric-card__btn metric-card__btn--reset" id="resetCalories">Сбросить</button>
+            </div>
+            <p class="metric-card__goal-label">Цель калорий: <span id="caloriesGoalDisplay">2 000</span> ккал</p>
+            <div class="metric-card__goal-row">
+              <input type="number" class="metric-card__input metric-card__input--goal" id="caloriesGoal" placeholder="цель" />
+              <button class="metric-card__btn metric-card__btn--set" id="setCaloriesGoal">Установить</button>
+              <button class="metric-card__btn metric-card__btn--clear" id="clearCaloriesGoal">Очистить</button>
+            </div>
+            <div class="metric-card__progress-row">
+              <div class="metric-card__progress-track"><div class="metric-card__progress-fill metric-card__progress-fill--calories" id="caloriesProgress"></div></div>
+              <span class="metric-card__progress-value" id="caloriesPercent">0%</span>
+            </div>
+            <div class="food-search">
+              <div class="food-search__header">
+                <span>Поиск продукта</span>
+                <small>ккал на 100 г</small>
+              </div>
+              <div class="food-search__controls">
+                <input type="text" class="food-search__input" id="foodQuery" placeholder="например: банан, курица, рис" />
+                <input type="number" class="food-search__grams" id="foodGrams" value="100" min="1" max="2000" />
+                <button class="food-search__btn" id="foodSearchBtn">Найти</button>
+              </div>
+              <div class="food-search__results" id="foodResults"></div>
+            </div>
+          </div>
+
+          <div class="metric-card">
+            <div class="metric-card__header"><div class="metric-card__icon-wrapper metric-card__icon--sleep"><i class="fas fa-bed"></i></div></div>
+            <h3 class="metric-card__title">Сон</h3>
+            <p class="metric-card__current" id="resultSleep">Сон сегодня: 0 часов</p>
+            <div class="metric-card__input-row">
+              <input type="number" class="metric-card__input" id="sleep" placeholder="часов" step="0.5" />
+              <button class="metric-card__btn metric-card__btn--add" id="addSleep">Добавить</button>
+              <button class="metric-card__btn metric-card__btn--reset" id="resetSleep">Сбросить</button>
+            </div>
+            <p class="metric-card__goal-label">Цель сна: <span id="sleepGoalDisplay">8</span> часов</p>
+            <div class="metric-card__goal-row">
+              <input type="number" class="metric-card__input metric-card__input--goal" id="sleepGoal" placeholder="цель" step="0.5" />
+              <button class="metric-card__btn metric-card__btn--set" id="setSleepGoal">Установить</button>
+              <button class="metric-card__btn metric-card__btn--clear" id="clearSleepGoal">Очистить</button>
+            </div>
+            <div class="metric-card__progress-row">
+              <div class="metric-card__progress-track"><div class="metric-card__progress-fill metric-card__progress-fill--sleep" id="sleepProgress"></div></div>
+              <span class="metric-card__progress-value" id="sleepPercent">0%</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- INFO CARDS -->
+        <div class="info-cards-row">
+          <div class="info-card info-card--water-balance">
+            <div class="info-card__header"><h3 class="info-card__title">Водный баланс</h3><i class="fas fa-droplet info-card__icon"></i></div>
+            <div class="info-card__content">
+              <p class="info-card__big-value" id="waterBalanceValue">0/8</p>
+              <p class="info-card__label">стаканов воды</p>
+              <div class="info-card__glasses" id="waterGlasses">
+                <div class="glass"></div><div class="glass"></div><div class="glass"></div><div class="glass"></div>
+                <div class="glass"></div><div class="glass"></div><div class="glass"></div><div class="glass"></div>
+              </div>
+            </div>
+          </div>
+
+          <div class="info-card info-card--recommendation">
+            <div class="info-card__header"><h3 class="info-card__title">Умная рекомендация</h3><i class="fas fa-brain info-card__icon"></i></div>
+            <div class="info-card__content">
+              <p class="info-card__status" id="recommendationStatus">Загрузка...</p>
+              <p class="info-card__text">Рекомендуемая норма: <span id="recommendedWater">2000</span> мл</p>
+              <p class="info-card__temp">🌡 Температура: <span id="weatherTemp">--</span>°C</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- ANALYTICS -->
+        <div class="analytics-section">
+          <h2 class="analytics-section__title">Аналитика за неделю</h2>
+          <div class="charts-grid">
+            <div class="chart-card"><h3 class="chart-card__title">Активность (шаги)</h3><canvas id="stepsChart"></canvas></div>
+            <div class="chart-card"><h3 class="chart-card__title">Потребление воды (мл)</h3><canvas id="waterChart"></canvas></div>
+            <div class="chart-card"><h3 class="chart-card__title">Продолжительность сна (часы)</h3><canvas id="sleepChart"></canvas></div>
+            <div class="chart-card"><h3 class="chart-card__title">Калории (ккал)</h3><canvas id="caloriesChart"></canvas></div>
+          </div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="modal-root hidden" id="profileModal" role="dialog" aria-modal="true" aria-labelledby="profileModalTitle">
+    <div class="modal-backdrop" id="profileModalBackdrop"></div>
+    <div class="profile-modal">
+      <div class="profile-modal__header">
+        <div>
+          <p class="profile-modal__eyebrow">Личный центр</p>
+          <h2 class="profile-modal__title" id="profileModalTitle">Мой профиль</h2>
+        </div>
+        <button class="profile-modal__close" id="profileModalClose" title="Закрыть"><i class="fas fa-xmark"></i></button>
+      </div>
+      <div class="profile-modal__tabs" id="profileModalTabs">
+        <button class="profile-modal__tab" data-tab="profile">Профиль</button>
+        <button class="profile-modal__tab" data-tab="activity">Активность</button>
+        <button class="profile-modal__tab" data-tab="achievements">Достижения</button>
+        <button class="profile-modal__tab" data-tab="sleep">Сон</button>
+        <button class="profile-modal__tab" data-tab="settings">Настройки</button>
+      </div>
+      <div class="profile-modal__body" id="profileModalBody"></div>
+    </div>
+  </div>
+
+  <script type="module" src="/src/main.js"></script>
+</body>
+</html>
