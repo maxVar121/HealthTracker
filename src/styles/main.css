@@ -13,6 +13,7 @@
   --shadow-md: 0 4px 12px rgba(0,0,0,0.06);
   --shadow-lg: 0 12px 28px rgba(0,0,0,0.08);
   --radius: 20px; --radius-sm: 14px; --radius-icon: 16px;
+  --mobile-header-offset: calc(96px + env(safe-area-inset-top));
 }
 
 body[data-theme="ocean"] {
@@ -811,7 +812,10 @@ body {
 @media (max-width: 760px) {
   html { font-size: 15px; }
   .header {
+    position: fixed;
     top: 0;
+    left: 0;
+    right: 0;
     flex-wrap: wrap;
     gap: 0.75rem;
     align-items: center;
@@ -832,7 +836,7 @@ body {
     justify-content: flex-end;
   }
   .main {
-    padding: 0.85rem 0.85rem 2rem;
+    padding: calc(var(--mobile-header-offset) + 0.85rem) 0.85rem 2rem;
   }
   .auth-section {
     min-height: calc(100svh - 96px);
@@ -907,7 +911,7 @@ body {
   }
   .header__dropdown {
     position: fixed;
-    top: 72px;
+    top: calc(var(--mobile-header-offset) - 10px);
     right: 0.85rem;
     left: 0.85rem;
     width: auto;
